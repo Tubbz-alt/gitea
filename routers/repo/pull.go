@@ -412,7 +412,7 @@ func MergePullRequest(ctx *context.Context) {
 
 	mergetype := ctx.Query("mergetype")
 	switch mergetype {
-	case "ffmerge":
+	case "ff":
 		pr.MergeType = 1//PullRequestFFMerge
 	default:
 		pr.MergeType = 0//PullRequestMerge
