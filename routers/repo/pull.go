@@ -410,6 +410,14 @@ func MergePullRequest(ctx *context.Context) {
 		return
 	}
 
+	mergetype := ctx.Query("mergetype")
+	switch mergetype {
+	case "ffmerge":
+		pr.MergeType = 1//PullRequestFFMerge
+	default:
+		pr.MergeType = 0//PullRequestMerge
+	}
+
 	pr.Issue = issue
 	pr.Issue.Repo = ctx.Repo.Repository
 	if err = pr.Merge(ctx.User, ctx.Repo.GitRepo); err != nil {

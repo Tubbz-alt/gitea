@@ -37,6 +37,12 @@ const (
 	PullRequestGit
 )
 
+type PullRequestMergeType int
+const (
+	PullRequestMerge PullRequestMergeType = iota
+	PullRequestFFMerge
+)
+
 // PullRequestStatus defines pull request status
 type PullRequestStatus int
 
@@ -73,6 +79,7 @@ type PullRequest struct {
 	Merger         *User     `xorm:"-"`
 	Merged         time.Time `xorm:"-"`
 	MergedUnix     int64     `xorm:"INDEX"`
+	MergeType			PullRequestMergeType
 }
 
 // BeforeUpdate is invoked from XORM before updating an object of this type.
@@ -305,18 +312,26 @@ func (pr *PullRequest) Merge(doer *User, baseGitRepo *git.Repository) (err error
 		return fmt.Errorf("git fetch [%s -> %s]: %s", headRepoPath, tmpBasePath, stderr)
 	}
 
-	if _, stderr, err = process.GetManager().ExecDir(-1, tmpBasePath,
-		fmt.Sprintf("PullRequest.Merge (git merge --no-ff --no-commit): %s", tmpBasePath),
-		"git", "merge", "--no-ff", "--no-commit", "head_repo/"+pr.HeadBranch); err != nil {
-		return fmt.Errorf("git merge --no-ff --no-commit [%s]: %v - %s", tmpBasePath, err, stderr)
-	}
+	if pr.MergeType == PullRequestFFMerge {
+		if _, stderr, err = process.GetManager().ExecDir(-1, tmpBasePath,
+			fmt.Sprintf("PullRequest.Merge (git merge --ff-only --no-commit): %s", tmpBasePath),
+			"git", "merge", "--ff-only", "--no-commit", "head_repo/"+pr.HeadBranch); err != nil {
+			return fmt.Errorf("git merge --ff-only --no-commit [%s]: %v - %s", tmpBasePath, err, stderr)
+		}
+	} else {
+		if _, stderr, err = process.GetManager().ExecDir(-1, tmpBasePath,
+			fmt.Sprintf("PullRequest.Merge (git merge --no-ff --no-commit): %s", tmpBasePath),
+			"git", "merge", "--no-ff", "--no-commit", "head_repo/"+pr.HeadBranch); err != nil {
+			return fmt.Errorf("git merge --no-ff --no-commit [%s]: %v - %s", tmpBasePath, err, stderr)
+		}
 
-	sig := doer.NewGitSig()
-	if _, stderr, err = process.GetManager().ExecDir(-1, tmpBasePath,
-		fmt.Sprintf("PullRequest.Merge (git merge): %s", tmpBasePath),
-		"git", "commit", fmt.Sprintf("--author='%s <%s>'", sig.Name, sig.Email),
-		"-m", fmt.Sprintf("Merge branch '%s' of %s/%s into %s", pr.HeadBranch, pr.HeadUserName, pr.HeadRepo.Name, pr.BaseBranch)); err != nil {
-		return fmt.Errorf("git commit [%s]: %v - %s", tmpBasePath, err, stderr)
+		sig := doer.NewGitSig()
+		if _, stderr, err = process.GetManager().ExecDir(-1, tmpBasePath,
+			fmt.Sprintf("PullRequest.Merge (git merge): %s", tmpBasePath),
+			"git", "commit", fmt.Sprintf("--author='%s <%s>'", sig.Name, sig.Email),
+			"-m", fmt.Sprintf("Merge branch '%s' of %s/%s into %s", pr.HeadBranch, pr.HeadUserName, pr.HeadRepo.Name, pr.BaseBranch)); err != nil {
+			return fmt.Errorf("git commit [%s]: %v - %s", tmpBasePath, err, stderr)
+		}
 	}
 
 	// Push back to upstream.

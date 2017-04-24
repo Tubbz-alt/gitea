@@ -46,8 +46,9 @@
 								<span class="octicon octicon-git-merge"></span> {{$.i18n.Tr "repo.pulls.merge_pull_request"}}
 							</button>
 						</form>
-						<form class="ui form" action="{{.Link}}/ff-merge" method="post">
+						<form class="ui form" action="{{.Link}}/merge" method="post">
 							{{.CsrfTokenHtml}}
+							<input type="hidden" name="mergetype" value="ff" />
 							<button class="ui green button">
 								<span class="octicon octicon-git-merge"></span> {{$.i18n.Tr "repo.pulls.ff_merge_pull_request"}}
 							</button>
