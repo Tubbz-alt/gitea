@@ -46,16 +46,16 @@
 						</span>
 						<div class="menu transition hidden" tabindex="-1">
 							<div class="item">
-								<form class="ui form" action="/Thinkst/canary-console-salt/pulls/6/merge" method="post">
-									<input type="hidden" name="_csrf" value="Kv1hu_fz1jY631AnbDuSI3TKd806MTQ5MzMyNTE3MTI3MzExNjUzMQ==">
+								<form class="ui form" action="{{.Link}}/merge" method="post">
+									{{.CsrfTokenHtml}}
 									<button class="ui green button">
 										<span class="octicon octicon-git-merge"></span> Merge Pull Request
 									</button>
 								</form>
 							</div>
 							<div class="item ui green">
-								<form class="ui form" action="/Thinkst/canary-console-salt/pulls/6/merge" method="post">
-									<input type="hidden" name="_csrf" value="Kv1hu_fz1jY631AnbDuSI3TKd806MTQ5MzMyNTE3MTI3MzExNjUzMQ==">
+								<form class="ui form" action="{{.Link}}/merge" method="post">
+									{{.CsrfTokenHtml}}
 									<input type="hidden" name="mergetype" value="ff">
 									<button class="ui green button">
 										<span class="octicon octicon-git-merge"></span> Fast-forward Merge Pull Request
