@@ -39,26 +39,26 @@
 				</div>
 				{{if .IsRepositoryWriter}}
 					<div class="ui divider"></div>
-					<div class="ui  dropdown jump item" tabindex="0">
-						<span class="text">
+					<div class="ui dropdown jump item" tabindex="0">
+						<span class="ui button">
 							Merge
 							<i class="dropdown icon" tabindex="0"><div class="menu" tabindex="-1"></div></i>
 						</span>
 						<div class="menu transition hidden" tabindex="-1">
 							<div class="item">
-								<form class="ui form" action="{{.Link}}/merge" method="post">
-									{{.CsrfTokenHtml}}
+								<form class="ui form" action="/Thinkst/canary-console-salt/pulls/6/merge" method="post">
+									<input type="hidden" name="_csrf" value="Kv1hu_fz1jY631AnbDuSI3TKd806MTQ5MzMyNTE3MTI3MzExNjUzMQ==">
 									<button class="ui green button">
-										<span class="octicon octicon-git-merge"></span> {{$.i18n.Tr "repo.pulls.merge_pull_request"}}
+										<span class="octicon octicon-git-merge"></span> Merge Pull Request
 									</button>
 								</form>
 							</div>
-							<div class="item">
-								<form class="ui form" action="{{.Link}}/merge" method="post">
-									{{.CsrfTokenHtml}}
-									<input type="hidden" name="mergetype" value="ff" />
+							<div class="item ui green">
+								<form class="ui form" action="/Thinkst/canary-console-salt/pulls/6/merge" method="post">
+									<input type="hidden" name="_csrf" value="Kv1hu_fz1jY631AnbDuSI3TKd806MTQ5MzMyNTE3MTI3MzExNjUzMQ==">
+									<input type="hidden" name="mergetype" value="ff">
 									<button class="ui green button">
-										<span class="octicon octicon-git-merge"></span> {{$.i18n.Tr "repo.pulls.ff_merge_pull_request"}}
+										<span class="octicon octicon-git-merge"></span> Fast-forward Merge Pull Request
 									</button>
 								</form>
 							</div>
